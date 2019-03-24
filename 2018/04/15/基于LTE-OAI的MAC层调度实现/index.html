@@ -79,13 +79,19 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="OpenAirInterface (OAI) 是一个持续更新的开源SDR LTE平台，由法国的Eurecom组织发起、开发和维护。相比其他的开源SDR LTE平台，OAI在国际上拥有广泛的应用场景。OAI平台主要使用C语言编写，按照3GPP的标准实现了LTE的eNB，UE和EPC，是目前开源SDR LTE平台里面最为完善的一个平台。此外，OAI平台还包含了大量的仿真平台，用于对各种通信算法的验证。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于LTE OAI的MAC层调度实现">
+<meta property="og:url" content="http://yoursite.com/2018/04/15/基于LTE-OAI的MAC层调度实现/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="OpenAirInterface (OAI) 是一个持续更新的开源SDR LTE平台，由法国的Eurecom组织发起、开发和维护。相比其他的开源SDR LTE平台，OAI在国际上拥有广泛的应用场景。OAI平台主要使用C语言编写，按照3GPP的标准实现了LTE的eNB，UE和EPC，是目前开源SDR LTE平台里面最为完善的一个平台。此外，OAI平台还包含了大量的仿真平台，用于对各种通信算法的验证。">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="c:/Users/tongc/Desktop/博客/调度流程.PNG">
+<meta property="og:updated_time" content="2019-03-24T16:20:58.625Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="基于LTE OAI的MAC层调度实现">
+<meta name="twitter:description" content="OpenAirInterface (OAI) 是一个持续更新的开源SDR LTE平台，由法国的Eurecom组织发起、开发和维护。相比其他的开源SDR LTE平台，OAI在国际上拥有广泛的应用场景。OAI平台主要使用C语言编写，按照3GPP的标准实现了LTE的eNB，UE和EPC，是目前开源SDR LTE平台里面最为完善的一个平台。此外，OAI平台还包含了大量的仿真平台，用于对各种通信算法的验证。">
+<meta name="twitter:image" content="c:/Users/tongc/Desktop/博客/调度流程.PNG">
 
 
 
@@ -115,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/">
+  <link rel="canonical" href="http://yoursite.com/2018/04/15/基于LTE-OAI的MAC层调度实现/">
 
 
 
 
 
-  <title>Hexo</title>
+  <title>基于LTE OAI的MAC层调度实现 | Hexo</title>
   
 
 
@@ -140,8 +146,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -214,137 +219,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/23/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/03/23/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-23T20:28:20+08:00">
-                2019-03-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
 
   
 
@@ -374,9 +251,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/15/基于LTE-OAI的MAC层调度实现/" itemprop="url">基于LTE OAI的MAC层调度实现</a></h1>
+          <h1 class="post-title" itemprop="name headline">基于LTE OAI的MAC层调度实现</h1>
         
 
         <div class="post-meta">
@@ -426,9 +301,7 @@
       
 
       
-        
-          
-            <p>OpenAirInterface (OAI) 是一个持续更新的开源SDR LTE平台，由法国的Eurecom组织发起、开发和维护。相比其他的开源SDR LTE平台，OAI在国际上拥有广泛的应用场景。OAI平台主要使用C语言编写，按照3GPP的标准实现了LTE的eNB，UE和EPC，是目前开源SDR LTE平台里面最为完善的一个平台。此外，OAI平台还包含了大量的仿真平台，用于对各种通信算法的验证。在本博客中，我们主要借助OAI硬件平台实现了三个经典的调度算法，并对性能结果进行了分析。</p>
+        <p>OpenAirInterface (OAI) 是一个持续更新的开源SDR LTE平台，由法国的Eurecom组织发起、开发和维护。相比其他的开源SDR LTE平台，OAI在国际上拥有广泛的应用场景。OAI平台主要使用C语言编写，按照3GPP的标准实现了LTE的eNB，UE和EPC，是目前开源SDR LTE平台里面最为完善的一个平台。此外，OAI平台还包含了大量的仿真平台，用于对各种通信算法的验证。在本博客中，我们主要借助OAI硬件平台实现了三个经典的调度算法，并对性能结果进行了分析。</p>
 <h2 id="LTE经典调度算法"><a href="#LTE经典调度算法" class="headerlink" title="LTE经典调度算法"></a>LTE经典调度算法</h2><h3 id="1-轮询"><a href="#1-轮询" class="headerlink" title="1.轮询"></a>1.轮询</h3><pre><code>基本思想：在小区内，所有激活的用户按照先到先得的顺序进行轮询，根据缓存中数据的量在每个子帧中选出N个用户参与调度，这几个用户分配的RB(Resource Block)资源也尽量平均，每个用户都会得到相同概率的服务机会
 性能：轮询算法能保证各个用户间的短期、长期公平性，是最公平的算法，但是它会造成资源利用率低，系统吞吐量很小。
 OAI平台中使用的就是轮询调度算法。
@@ -438,8 +311,6 @@ OAI平台中使用的就是轮询调度算法。
 性能：满足用户的长期公平性，但是不满足短期公平性，而且用户只有在快衰落状况比较好的时候才能获得服务，所以可以提高系统吞吐量，是一种兼顾公平性和吞吐量最大化的折中方法。
 </code></pre><h2 id="OAI中的调度过程"><a href="#OAI中的调度过程" class="headerlink" title="OAI中的调度过程"></a>OAI中的调度过程</h2><p><img src="C:\Users\tongc\Desktop\博客\调度流程.PNG" alt="avatar"></p>
 
-          
-        
       
     </div>
     
@@ -456,12 +327,28 @@ OAI平台中使用的就是轮询调度算法。
       
 
       
+      
+      
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/23/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -471,10 +358,11 @@ OAI平台中使用的就是轮询调度算法。
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -482,6 +370,10 @@ OAI平台中使用的就是轮询调度算法。
 
 
           
+
+  
+
+
 
         </div>
         
@@ -502,8 +394,17 @@ OAI平台中使用的就是轮询调度算法。
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -545,6 +446,22 @@ OAI平台中使用的就是轮询调度算法。
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#LTE经典调度算法"><span class="nav-number">1.</span> <span class="nav-text">LTE经典调度算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-轮询"><span class="nav-number">1.1.</span> <span class="nav-text">1.轮询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-最大载干比"><span class="nav-number">1.2.</span> <span class="nav-text">2.最大载干比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-比例公平"><span class="nav-number">1.3.</span> <span class="nav-text">3.比例公平</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OAI中的调度过程"><span class="nav-number">2.</span> <span class="nav-text">OAI中的调度过程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -678,6 +595,10 @@ OAI平台中使用的就是轮询调度算法。
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
