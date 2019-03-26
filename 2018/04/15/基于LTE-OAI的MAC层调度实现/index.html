@@ -86,12 +86,16 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="OpenAirInterface (OAI) 是一个持续更新的开源SDR LTE平台，由法国的Eurecom组织发起、开发和维护。相比其他的开源SDR LTE平台，OAI在国际上拥有广泛的应用场景。OAI平台主要使用C语言编写，按照3GPP的标准实现了LTE的eNB，UE和EPC，是目前开源SDR LTE平台里面最为完善的一个平台。此外，OAI平台还包含了大量的仿真平台，用于对各种通信算法的验证。">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="c:/Users/tongc/Desktop/博客/调度流程.PNG">
-<meta property="og:updated_time" content="2019-03-24T16:20:58.625Z">
+<meta property="og:image" content="https://github.com/chifeichi/IMG/raw/master/img/schedule.PNG">
+<meta property="og:image" content="https://github.com/chifeichi/IMG/raw/master/img/shedule_ul.PNG">
+<meta property="og:image" content="https://github.com/chifeichi/IMG/raw/master/img/topology.png">
+<meta property="og:image" content="https://github.com/chifeichi/IMG/raw/master/img/env.png">
+<meta property="og:image" content="https://github.com/chifeichi/IMG/raw/master/img/result.png">
+<meta property="og:updated_time" content="2019-03-26T15:49:28.511Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于LTE OAI的MAC层调度实现">
 <meta name="twitter:description" content="OpenAirInterface (OAI) 是一个持续更新的开源SDR LTE平台，由法国的Eurecom组织发起、开发和维护。相比其他的开源SDR LTE平台，OAI在国际上拥有广泛的应用场景。OAI平台主要使用C语言编写，按照3GPP的标准实现了LTE的eNB，UE和EPC，是目前开源SDR LTE平台里面最为完善的一个平台。此外，OAI平台还包含了大量的仿真平台，用于对各种通信算法的验证。">
-<meta name="twitter:image" content="c:/Users/tongc/Desktop/博客/调度流程.PNG">
+<meta name="twitter:image" content="https://github.com/chifeichi/IMG/raw/master/img/schedule.PNG">
 
 
 
@@ -302,14 +306,35 @@
 
       
         <p>OpenAirInterface (OAI) 是一个持续更新的开源SDR LTE平台，由法国的Eurecom组织发起、开发和维护。相比其他的开源SDR LTE平台，OAI在国际上拥有广泛的应用场景。OAI平台主要使用C语言编写，按照3GPP的标准实现了LTE的eNB，UE和EPC，是目前开源SDR LTE平台里面最为完善的一个平台。此外，OAI平台还包含了大量的仿真平台，用于对各种通信算法的验证。在本博客中，我们主要借助OAI硬件平台实现了三个经典的调度算法，并对性能结果进行了分析。</p>
-<h2 id="LTE经典调度算法"><a href="#LTE经典调度算法" class="headerlink" title="LTE经典调度算法"></a>LTE经典调度算法</h2><h3 id="1-轮询"><a href="#1-轮询" class="headerlink" title="1.轮询"></a>1.轮询</h3><pre><code>基本思想：在小区内，所有激活的用户按照先到先得的顺序进行轮询，根据缓存中数据的量在每个子帧中选出N个用户参与调度，这几个用户分配的RB(Resource Block)资源也尽量平均，每个用户都会得到相同概率的服务机会
-性能：轮询算法能保证各个用户间的短期、长期公平性，是最公平的算法，但是它会造成资源利用率低，系统吞吐量很小。
-OAI平台中使用的就是轮询调度算法。
-</code></pre><h3 id="2-最大载干比"><a href="#2-最大载干比" class="headerlink" title="2.最大载干比"></a>2.最大载干比</h3><pre><code>基本思想：对所有等待服务的用户的接收信号载干比进行排序，把资源分配给载干比高的用户，也就是基站把资源分配给信道质量最好的用户。
-性能：最大的优点是使得系统吞吐量达到上限，但是会导致远、近用户得到的服务差异很大，信道质量差的用户可能一直得不到服务的机会，所以它是一种最不公平的算法。
-</code></pre><h3 id="3-比例公平"><a href="#3-比例公平" class="headerlink" title="3.比例公平"></a>3.比例公平</h3><pre><code>基本思想：按(用户当前载干比) / (用户长期平均吞吐量) 的优先级，对优先级高的用户进行调度。开始信道质量好的用户会连续调度一段时间，在这段时间内分子变化不大，但是分母越来越大，这样优先级就会降低，使另一用户获得资源。
-性能：满足用户的长期公平性，但是不满足短期公平性，而且用户只有在快衰落状况比较好的时候才能获得服务，所以可以提高系统吞吐量，是一种兼顾公平性和吞吐量最大化的折中方法。
-</code></pre><h2 id="OAI中的调度过程"><a href="#OAI中的调度过程" class="headerlink" title="OAI中的调度过程"></a>OAI中的调度过程</h2><p><img src="C:\Users\tongc\Desktop\博客\调度流程.PNG" alt="avatar"></p>
+<h2 id="LTE经典调度算法"><a href="#LTE经典调度算法" class="headerlink" title="LTE经典调度算法"></a>LTE经典调度算法</h2><h3 id="1-轮询"><a href="#1-轮询" class="headerlink" title="1.轮询"></a>1.轮询</h3><p><strong>基本思想</strong>：在小区内，所有激活的用户按照先到先得的顺序进行轮询，根据缓存中数据的量在每个子帧中选出N个用户参与调度，这几个用户分配的RB(Resource Block)资源也尽量平均，每个用户都会得到相同概率的服务机会。<br><strong>性能</strong>：轮询算法能保证各个用户间的短期、长期公平性，是最公平的算法，但是它会造成资源利用率低，系统吞吐量很小。<br>OAI平台中使用的就是轮询调度算法。</p>
+<h3 id="2-最大载干比"><a href="#2-最大载干比" class="headerlink" title="2.最大载干比"></a>2.最大载干比</h3><p><strong>基本思想</strong>：对所有等待服务的用户的接收信号载干比进行排序，把资源分配给载干比高的用户，也就是基站把资源分配给信道质量最好的用户。<br><strong>性能</strong>：最大的优点是使得系统吞吐量达到上限，但是会导致远、近用户得到的服务差异很大，信道质量差的用户可能一直得不到服务的机会，所以它是一种最不公平的算法。</p>
+<h3 id="3-比例公平"><a href="#3-比例公平" class="headerlink" title="3.比例公平"></a>3.比例公平</h3><p><strong>基本思想</strong>：按(用户当前载干比) / (用户长期平均吞吐量) 的优先级，对优先级高的用户进行调度。开始信道质量好的用户会连续调度一段时间，在这段时间内分子变化不大，但是分母越来越大，这样优先级就会降低，使另一用户获得资源。<br><strong>性能</strong>：满足用户的长期公平性，但是不满足短期公平性，而且用户只有在快衰落状况比较好的时候才能获得服务，所以可以提高系统吞吐量，是一种兼顾公平性和吞吐量最大化的折中方法。</p>
+<h2 id="OAI中的调度过程和修改"><a href="#OAI中的调度过程和修改" class="headerlink" title="OAI中的调度过程和修改"></a>OAI中的调度过程和修改</h2><h3 id="1-OAI中的下行调度过程"><a href="#1-OAI中的下行调度过程" class="headerlink" title="1.OAI中的下行调度过程"></a>1.OAI中的下行调度过程</h3><p><img src="https://github.com/chifeichi/IMG/raw/master/img/schedule.PNG" alt></p>
+<ul>
+<li>计算每个用户需要的RB个数时，根据mcs和初始RB数算出的TBS与逻辑信道缓冲区大小buffer比较，不够则RB + rb_unit(25rb时为2)再进行比较，直到够为止。</li>
+<li>在分配子带时，从RBG编号0开始寻找未被分配的子带，将子带置为1则表示对此编号的子带完成分配。</li>
+<li>对于重传数据与新数据，nb_rb_1与nb_rb_2的获取方式与1中提到的类似，只是nb_rb_2的比较buffer中除了sdu长度，还包括解析出来的DCCH、DTCH头长度和TA(时间提前量)长度。</li>
+<li>下行共享信道中RB为TYPE0。</li>
+</ul>
+<h3 id="2-OAI中的上行调度过程"><a href="#2-OAI中的上行调度过程" class="headerlink" title="2.OAI中的上行调度过程"></a>2.OAI中的上行调度过程</h3><p><img src="https://github.com/chifeichi/IMG/raw/master/img/shedule_ul.PNG" alt></p>
+<ul>
+<li>计算每个用户需要的RB总数时，首先根据PHR(功率余量)，TBS获得最大的mcs，再根据PHR、TBS、mcs获取最小的rb_table_index(每个rb索引对应一个2x3y5z 大小的RB数)。</li>
+<li>对于上行共享信道的重传数据，OAI中没有任何操作。</li>
+<li>分配子带时采用的是基于三角形二叉树的编码方式对RIV(资源指示值)进行编码。</li>
+<li>下行共享信道中RB为TYPE2。</li>
+</ul>
+<h3 id="3-最大载干比的修改"><a href="#3-最大载干比的修改" class="headerlink" title="3.最大载干比的修改"></a>3.最大载干比的修改</h3><ul>
+<li>在OAI平台的MAC层代码中，将下行UE排序函数中的比较指标cqi放到第一位置，优先把cqi高的UE放在UE队列前面；再将eNB调度函数中给每个UE平均分配RB的操作，改为按顺序对UE队列中的各个元素分配足够用的RB数。</li>
+</ul>
+<h3 id="4-比例公平的修改"><a href="#4-比例公平的修改" class="headerlink" title="4.比例公平的修改"></a>4.比例公平的修改</h3><ul>
+<li>在OAI平台的MAC层代码中，将下行UE排序函数中的比较指标 (用户当前吞吐量) / (用户总吞吐量) 放到第一位置，优先把此指标高的UE放在UE队列前面；再将eNB调度函数中给每个UE平均分配RB的操作，改为按顺序对UE队列中的各个元素分配足够用的RB数。</li>
+</ul>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><h3 id="1-网络拓扑"><a href="#1-网络拓扑" class="headerlink" title="1.网络拓扑"></a>1.网络拓扑</h3><p><img src="https://github.com/chifeichi/IMG/raw/master/img/topology.png" alt></p>
+<h3 id="2-实际环境场景"><a href="#2-实际环境场景" class="headerlink" title="2.实际环境场景"></a>2.实际环境场景</h3><p><img src="https://github.com/chifeichi/IMG/raw/master/img/env.png" alt></p>
+<h3 id="3-性能分析"><a href="#3-性能分析" class="headerlink" title="3.性能分析"></a>3.性能分析</h3><ul>
+<li>由结果图可以看出，轮询算法的公平性最好，但吞吐量最低；最大载干比算法的公平性最差，但吞吐量最高；而比例公平算法的公平性较好，且吞吐量较高。结果和三种调度算法的基本特点吻合。</li>
+</ul>
+<p><img src="https://github.com/chifeichi/IMG/raw/master/img/result.png" alt></p>
 
       
     </div>
@@ -330,22 +355,6 @@ OAI平台中使用的就是轮询调度算法。
       
       
 
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/03/23/hello-world/" rel="prev" title="Hello World">
-                Hello World <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
       
 
       
@@ -419,7 +428,7 @@ OAI平台中使用的就是轮询调度算法。
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">1</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -456,7 +465,7 @@ OAI平台中使用的就是轮询调度算法。
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#LTE经典调度算法"><span class="nav-number">1.</span> <span class="nav-text">LTE经典调度算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-轮询"><span class="nav-number">1.1.</span> <span class="nav-text">1.轮询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-最大载干比"><span class="nav-number">1.2.</span> <span class="nav-text">2.最大载干比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-比例公平"><span class="nav-number">1.3.</span> <span class="nav-text">3.比例公平</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OAI中的调度过程"><span class="nav-number">2.</span> <span class="nav-text">OAI中的调度过程</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#LTE经典调度算法"><span class="nav-number">1.</span> <span class="nav-text">LTE经典调度算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-轮询"><span class="nav-number">1.1.</span> <span class="nav-text">1.轮询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-最大载干比"><span class="nav-number">1.2.</span> <span class="nav-text">2.最大载干比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-比例公平"><span class="nav-number">1.3.</span> <span class="nav-text">3.比例公平</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OAI中的调度过程和修改"><span class="nav-number">2.</span> <span class="nav-text">OAI中的调度过程和修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-OAI中的下行调度过程"><span class="nav-number">2.1.</span> <span class="nav-text">1.OAI中的下行调度过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-OAI中的上行调度过程"><span class="nav-number">2.2.</span> <span class="nav-text">2.OAI中的上行调度过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-最大载干比的修改"><span class="nav-number">2.3.</span> <span class="nav-text">3.最大载干比的修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-比例公平的修改"><span class="nav-number">2.4.</span> <span class="nav-text">4.比例公平的修改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能测试"><span class="nav-number">3.</span> <span class="nav-text">性能测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-网络拓扑"><span class="nav-number">3.1.</span> <span class="nav-text">1.网络拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-实际环境场景"><span class="nav-number">3.2.</span> <span class="nav-text">2.实际环境场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-性能分析"><span class="nav-number">3.3.</span> <span class="nav-text">3.性能分析</span></a></li></ol></li></ol></div>
             
 
           </div>
